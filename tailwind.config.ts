@@ -16,6 +16,8 @@ const config: Config = {
         mausoleum: '#3C3489',
       },
       fontFamily: {
+        pixel: ['var(--font-pixel)', 'monospace'],
+        vt323: ['var(--font-vt323)', 'monospace'],
         serif: ['Playfair Display', 'Georgia', 'serif'],
         mono: ['Courier New', 'monospace'],
       },

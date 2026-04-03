@@ -16,18 +16,39 @@ export default function MausoleumRow({ graves }: MausoleumRowProps) {
 
   return (
     <>
-      <div className="border-b border-mausoleum/30 bg-mausoleum/5 px-4 py-6">
-        <p className="mb-4 text-center text-xs uppercase tracking-widest text-mausoleum/70">
-          The Mausoleum
+      <div
+        className="border-b border-t border-mausoleum/20"
+        style={{
+          background: 'linear-gradient(to bottom, #0c0b1a, #100e22)',
+          padding: '20px 16px 0',
+          overflowX: 'auto',
+        }}
+      >
+        {/* Section label */}
+        <p
+          className="mb-4 text-center text-mausoleum/60 tracking-widest"
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
+        >
+          ✦ THE MAUSOLEUM ✦
         </p>
-        <div className="flex gap-4 overflow-x-auto pb-2 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:pb-0">
-          {graves.map((grave) => (
+
+        {/* Stars strip */}
+        <div className="mb-2 flex justify-center gap-1 opacity-30">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div key={i} style={{ width: i % 4 === 0 ? 2 : 1, height: i % 4 === 0 ? 2 : 1, background: '#ffffff' }} />
+          ))}
+        </div>
+
+        {/* Buildings */}
+        <div className="flex justify-center gap-8 pb-0">
+          {graves.map(grave => (
             <button
               key={grave.id}
               onClick={() => setSelectedGrave(grave)}
-              className="tombstone-mausoleum cursor-pointer transition-opacity hover:opacity-80"
+              className="tombstone-mausoleum cursor-pointer transition-all duration-200 hover:brightness-125 focus:outline-none"
               title={grave.subject}
-              aria-label={`View grave for ${grave.subject}`}
+              aria-label={`View mausoleum for ${grave.subject}`}
+              style={{ background: 'none', border: 'none', padding: 0 }}
             >
               <Tombstone
                 subject={grave.subject}
