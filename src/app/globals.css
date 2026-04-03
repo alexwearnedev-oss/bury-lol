@@ -7,3 +7,18 @@ body {
   color: #F5F0E8;
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+/* Mausoleum animated border — slow pulse, no flashing */
+@keyframes mausoleum-pulse {
+  0%, 100% {
+    box-shadow: 0 0 6px 1px rgba(60, 52, 137, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px rgba(60, 52, 137, 0.7);
+  }
+}
+
+.tombstone-mausoleum {
+  animation: mausoleum-pulse 2s ease-in-out infinite;
+  border-radius: 4px;
+}
