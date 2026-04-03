@@ -69,7 +69,7 @@ export default async function GravePage({ params }: Props) {
 
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
         {/* Large tombstone */}
-        <div className="mb-8 scale-150 transform">
+        <div className="mb-8 scale-110 transform sm:scale-150">
           <Tombstone
             subject={grave.subject}
             epitaph={grave.epitaph ?? undefined}

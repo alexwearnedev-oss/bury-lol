@@ -20,7 +20,7 @@ export default function MausoleumRow({ graves }: MausoleumRowProps) {
         <p className="mb-4 text-center text-xs uppercase tracking-widest text-mausoleum/70">
           The Mausoleum
         </p>
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex gap-4 overflow-x-auto pb-2 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:pb-0">
           {graves.map((grave) => (
             <button
               key={grave.id}

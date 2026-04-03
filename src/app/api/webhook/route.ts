@@ -9,9 +9,18 @@ import GraveConfirmationEmail from '../../../../emails/GraveConfirmation';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Keyword blocklist — auto-reject graves containing these terms
+// Common slurs and harassment terms — expand before going live
 const BLOCKLIST: string[] = [
-  // Seed with obvious terms at launch
-  // Not listed here for obvious reasons — add before going live
+  // Racial slurs
+  'nigger', 'nigga', 'chink', 'spic', 'kike', 'wetback', 'gook', 'coon',
+  // Homophobic/transphobic slurs
+  'faggot', 'tranny', 'dyke',
+  // Targeted harassment patterns
+  'kill yourself', 'kys', 'go die', 'neck yourself',
+  // Spam/URL indicators
+  'http://', 'https://', 'www.', '.com', '.net', '.org', '.io',
+  // Sexual harassment
+  'rape', 'molest',
 ];
 
 function containsBlocklisted(text: string): boolean {

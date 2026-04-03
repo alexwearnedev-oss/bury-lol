@@ -172,7 +172,7 @@ export default function BuryPage() {
             {/* Live preview */}
             <div>
               <label className="mb-2 block text-sm text-stone">Preview</label>
-              <div className="flex justify-center rounded border border-stone/20 bg-black/30 p-6">
+              <div className="flex justify-center overflow-x-auto rounded border border-stone/20 bg-black/30 p-6">
                 <Tombstone
                   subject={subject || 'Your thing here'}
                   epitaph={epitaph || undefined}

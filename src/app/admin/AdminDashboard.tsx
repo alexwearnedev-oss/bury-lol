@@ -149,7 +149,7 @@ export default function AdminDashboard({ pending, reported, counts }: Props) {
         </div>
 
         {/* Stats bar */}
-        <div className="mb-8 grid grid-cols-4 gap-3">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             { label: 'Pending', value: counts.pending, color: 'text-yellow-400' },
             { label: 'Approved', value: counts.approved, color: 'text-moss' },
