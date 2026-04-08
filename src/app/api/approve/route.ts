@@ -8,31 +8,27 @@ const schema = z.object({
   reason: z.string().max(200).optional(),
 });
 
-// Calculate next available grid position (row-major, 20 cols wide)
-async function getNextGridPosition(): Promise<{ grid_x: number; grid_y: number }> {
+// Find first free grid position that isn't taken by any approved grave.
+// Scans gx=0,1,2,... with gy=0 (the canonical encoding used everywhere).
+async function findFreeGridPosition(excludeId: string): Promise<{ grid_x: number; grid_y: number }> {
   const { data } = await supabaseAdmin
     .from('graves')
     .select('grid_x, grid_y')
     .eq('status', 'approved')
-    .not('grid_x', 'is', null)
-    .order('grid_y', { ascending: false })
-    .order('grid_x', { ascending: false })
-    .limit(1);
+    .not('grid_x', 'is', null);
 
-  if (!data || data.length === 0) {
-    return { grid_x: 0, grid_y: 0 };
+  const occupied = new Set(
+    (data ?? []).map(g => `${g.grid_x},${g.grid_y}`)
+  );
+  // Exclude the grave being approved (it may already have a preferred position recorded)
+  void excludeId;
+
+  for (let gx = 0; gx < 10000; gx++) {
+    if (!occupied.has(`${gx},0`)) {
+      return { grid_x: gx, grid_y: 0 };
+    }
   }
-
-  const last = data[0];
-  const lastX = last.grid_x as number;
-  const lastY = last.grid_y as number;
-  const COLS = 20;
-
-  if (lastX + 1 < COLS) {
-    return { grid_x: lastX + 1, grid_y: lastY };
-  } else {
-    return { grid_x: 0, grid_y: lastY + 1 };
-  }
+  return { grid_x: 10000, grid_y: 0 };
 }
 
 export async function POST(request: NextRequest) {
@@ -49,17 +45,36 @@ export async function POST(request: NextRequest) {
   const { id, action, reason } = result.data;
 
   if (action === 'approve') {
-    // Get the grave's tier first
+    // Fetch the grave's current state (tier + any preferred position set at webhook time)
     const { data: grave } = await supabaseAdmin
       .from('graves')
-      .select('tier')
+      .select('tier, grid_x, grid_y')
       .eq('id', id)
       .single();
 
-    let position = {};
-    // Mausoleum tier goes to its own row — no grid position needed
-    if (grave?.tier !== 4) {
-      position = await getNextGridPosition();
+    let position: { grid_x: number; grid_y: number };
+
+    if (grave?.grid_x != null && grave?.grid_y != null) {
+      // User chose a preferred plot — check if it's still free among approved graves
+      const { data: conflict } = await supabaseAdmin
+        .from('graves')
+        .select('id')
+        .eq('status', 'approved')
+        .eq('grid_x', grave.grid_x)
+        .eq('grid_y', grave.grid_y)
+        .neq('id', id)
+        .limit(1);
+
+      if (!conflict || conflict.length === 0) {
+        // Position is free — honour the preference
+        position = { grid_x: grave.grid_x, grid_y: grave.grid_y };
+      } else {
+        // Position taken — auto-assign the next free slot
+        position = await findFreeGridPosition(id);
+      }
+    } else {
+      // No preference — auto-assign
+      position = await findFreeGridPosition(id);
     }
 
     const { error } = await supabaseAdmin

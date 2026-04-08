@@ -57,11 +57,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
     }
 
-    const subject   = meta.subject;
-    const epitaph   = meta.epitaph   || null;
-    const buried_by = meta.buried_by || 'Anonymous';
-    const tier      = parseInt(meta.tier);
-    const icon      = meta.icon      || null;
+    const subject     = meta.subject;
+    const epitaph     = meta.epitaph     || null;
+    const buried_by   = meta.buried_by   || 'Anonymous';
+    const tier        = parseInt(meta.tier);
+    const icon        = meta.icon        || null;
+    const preferred_x = meta.preferred_x ? parseInt(meta.preferred_x) : null;
+    const preferred_y = meta.preferred_y ? parseInt(meta.preferred_y) : null;
 
     // Check blocklist — still write to DB for audit trail, but auto-reject
     const isBlocked =
@@ -85,6 +87,8 @@ export async function POST(request: NextRequest) {
         status: isBlocked ? 'rejected' : 'pending',
         rejection_reason: isBlocked ? 'auto-rejected: blocklist' : null,
         ip_hash: ipHash,
+        // Store preferred plot so approve route can honour it
+        ...(preferred_x != null && preferred_y != null ? { grid_x: preferred_x, grid_y: preferred_y } : {}),
       })
       .select('share_token')
       .single();

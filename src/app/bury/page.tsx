@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Nav from '@/components/Nav';
 import Tombstone, { TIER_DIMS } from '@/components/Tombstone';
 import EmojiPicker from '@/components/EmojiPicker';
+import PlotPicker, { type PlotPosition } from '@/components/PlotPicker';
 
 const TIERS = [
   { tier: 1 as const, price: '$1', name: 'A shallow grave',    desc: 'Standard tombstone',                  border: 'border-border' },
@@ -16,7 +17,8 @@ const STEPS = [
   { n: 1, label: 'Write your RIP' },
   { n: 2, label: 'Choose an icon' },
   { n: 3, label: 'Pick a burial' },
-  { n: 4, label: 'Confirm' },
+  { n: 4, label: 'Choose a plot' },
+  { n: 5, label: 'Confirm' },
 ];
 
 function StepBar({ current }: { current: number }) {
@@ -54,16 +56,17 @@ function StepBar({ current }: { current: number }) {
 }
 
 export default function BuryPage() {
-  const [step,       setStep]       = useState(1);
-  const [subject,    setSubject]    = useState('');
-  const [epitaph,    setEpitaph]    = useState('');
-  const [buriedBy,   setBuriedBy]   = useState('');
-  const [birthYear,  setBirthYear]  = useState('');
-  const [deathYear,  setDeathYear]  = useState('');
-  const [icon,       setIcon]       = useState('🪦');
-  const [tier,       setTier]       = useState<1|2|3|4>(2);
-  const [loading,    setLoading]    = useState(false);
-  const [error,      setError]      = useState('');
+  const [step,          setStep]          = useState(1);
+  const [subject,       setSubject]       = useState('');
+  const [epitaph,       setEpitaph]       = useState('');
+  const [buriedBy,      setBuriedBy]      = useState('');
+  const [birthYear,     setBirthYear]     = useState('');
+  const [deathYear,     setDeathYear]     = useState('');
+  const [icon,          setIcon]          = useState('🪦');
+  const [tier,          setTier]          = useState<1|2|3|4>(2);
+  const [preferredPlot, setPreferredPlot] = useState<PlotPosition | null>(null);
+  const [loading,       setLoading]       = useState(false);
+  const [error,         setError]         = useState('');
 
   const handleSubmit = async () => {
     setError('');
@@ -78,6 +81,8 @@ export default function BuryPage() {
           buried_by: buriedBy.trim() || undefined,
           tier,
           icon: icon || undefined,
+          preferred_x: preferredPlot?.grid_x,
+          preferred_y: preferredPlot?.grid_y,
         }),
       });
       if (res.status === 429) {
@@ -354,8 +359,41 @@ export default function BuryPage() {
             </div>
           )}
 
-          {/* ── Step 4: Preview + confirm ── */}
+          {/* ── Step 4: Choose a plot ── */}
           {step === 4 && (
+            <div className="fade-in">
+              <div className="pixel-border mb-4 p-4" style={{ background: '#12102A' }}>
+                <p className="mb-1 text-cream" style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}>
+                  📍 CHOOSE YOUR PLOT
+                </p>
+                <p className="mb-4 text-muted" style={{ fontFamily: 'var(--font-vt323)', fontSize: 16 }}>
+                  Click any empty square to reserve your spot. Or skip and we&apos;ll pick one for you.
+                </p>
+                <PlotPicker value={preferredPlot} onChange={setPreferredPlot} />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  className="btn-outline flex-1 py-3"
+                  style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
+                >
+                  ← BACK
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(5)}
+                  className="btn-purple flex-1 py-3"
+                  style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
+                >
+                  NEXT →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 5: Preview + confirm ── */}
+          {step === 5 && (
             <div className="fade-in">
               <div className="pixel-border mb-4 p-4" style={{ background: '#12102A' }}>
                 <p className="mb-4 text-cream" style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}>
@@ -381,6 +419,7 @@ export default function BuryPage() {
                     ['Buried by',   buriedBy || 'Anonymous'],
                     ['Icon',        icon || 'none'],
                     ['Tier',        selectedTier.name],
+                    ['Plot',        preferredPlot ? `(${preferredPlot.col}, ${preferredPlot.row})` : 'Auto-assigned'],
                     ['Price',       selectedTier.price],
                   ].map(([label, val]) => (
                     <div key={label} className="flex items-start justify-between gap-4">
@@ -413,7 +452,7 @@ export default function BuryPage() {
 
               <button
                 type="button"
-                onClick={() => setStep(3)}
+                onClick={() => setStep(4)}
                 className="btn-outline w-full py-3"
                 style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
               >
