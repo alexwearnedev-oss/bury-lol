@@ -14,8 +14,8 @@ const TILE_W     = 128;
 const TILE_H     = 64;
 const WALL_H     = 12;
 const CLIFF_H    = 6000;  // rocky cliff depth — extends to bottom of screen
-const MIN_ROWS   = 10;
-const EXTRA      = 5;
+/** Cemetery is always exactly 10×10 plots — finite and fixed. Never changes. */
+const DISP_ROWS  = 10;
 const CAM_MARGIN = 60;
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -1328,7 +1328,7 @@ export default function GraveyardCanvas({ initialGraves }: Props) {
     return { graveMap, maxRow };
   }, [graves]);
 
-  const totalRows = Math.max(MIN_ROWS, maxRow + 1 + EXTRA);
+  const totalRows = DISP_ROWS;
 
   const worldBounds = useMemo(() => {
     let minX = Infinity;

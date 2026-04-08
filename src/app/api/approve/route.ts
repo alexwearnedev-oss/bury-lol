@@ -23,12 +23,14 @@ async function findFreeGridPosition(excludeId: string): Promise<{ grid_x: number
   // Exclude the grave being approved (it may already have a preferred position recorded)
   void excludeId;
 
-  for (let gx = 0; gx < 10000; gx++) {
+  // 10×10 grid = 100 fixed plots (gx 0–99, gy 0)
+  for (let gx = 0; gx < 100; gx++) {
     if (!occupied.has(`${gx},0`)) {
       return { grid_x: gx, grid_y: 0 };
     }
   }
-  return { grid_x: 10000, grid_y: 0 };
+  // Graveyard full — overflow beyond grid (admin should handle)
+  return { grid_x: 100, grid_y: 0 };
 }
 
 export async function POST(request: NextRequest) {
