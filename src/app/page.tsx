@@ -142,8 +142,7 @@ export default async function Home() {
       .from('graves')
       .select('id, subject, epitaph, buried_by, tier, amount_paid, share_token, grid_x, grid_y, created_at, status, report_count, icon, visit_count')
       .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(5),
+      .order('created_at', { ascending: true }),
     supabase.from('stats').select('total_approved, total_revenue_cents').single(),
   ]);
 
