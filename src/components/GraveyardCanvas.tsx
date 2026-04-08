@@ -14,7 +14,7 @@ const TILE_W     = 128;
 const TILE_H     = 64;
 const WALL_H     = 12;
 const CLIFF_H    = 6000;  // rocky cliff depth — extends to bottom of screen
-const MIN_ROWS   = 6;
+const MIN_ROWS   = 10;
 const EXTRA      = 5;
 const CAM_MARGIN = 60;
 

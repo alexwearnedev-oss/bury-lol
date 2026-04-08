@@ -16,12 +16,7 @@ export default async function GraveyardPage() {
     supabase.from('stats').select('total_approved, total_revenue_cents').single(),
   ]);
 
-  const rawGraves = (gravesResult.data ?? []) as Grave[];
-  // TEST: 7 spread graves — remove this filter before launch
-  const step = rawGraves.length > 7 ? Math.floor(rawGraves.length / 7) : 1;
-  const allGraves = rawGraves.length > 7
-    ? rawGraves.filter((_, i) => i % step === 0).slice(0, 7)
-    : rawGraves;
+  const allGraves = (gravesResult.data ?? []) as Grave[];
   const stats     = statsResult.data as Stats | null;
 
   const totalApproved = stats?.total_approved ?? 0;
