@@ -17,7 +17,7 @@ export default function MausoleumRow({ graves }: MausoleumRowProps) {
   return (
     <>
       <div
-        className="border-b border-t border-mausoleum/20"
+        className="border-b border-t border-purple/20"
         style={{
           background: 'linear-gradient(to bottom, #0c0b1a, #100e22)',
           padding: '20px 16px 0',
@@ -26,7 +26,7 @@ export default function MausoleumRow({ graves }: MausoleumRowProps) {
       >
         {/* Section label */}
         <p
-          className="mb-4 text-center text-mausoleum/60 tracking-widest"
+          className="mb-4 text-center text-purpleLight/60 tracking-widest"
           style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
         >
           ✦ THE MAUSOLEUM ✦
@@ -54,6 +54,7 @@ export default function MausoleumRow({ graves }: MausoleumRowProps) {
                 subject={grave.subject}
                 epitaph={grave.epitaph ?? undefined}
                 buried_by={grave.buried_by}
+                icon={grave.icon}
                 tier={4}
               />
             </button>

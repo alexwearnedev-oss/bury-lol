@@ -9,11 +9,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: '#111111',
-        cream: '#F5F0E8',
-        stone: '#888780',
-        moss: '#3B6D11',
-        mausoleum: '#3C3489',
+        // Core backgrounds
+        bg:         '#0D0B1E',
+        surface:    '#12102A',
+        surfaceHi:  '#1A1835',
+        border:     '#2A2450',
+        // Brand purple
+        purple:     '#6B5DB8',
+        purpleDark: '#4A3B8C',
+        purpleLight:'#9B8FD8',
+        // Accents
+        gold:       '#C8A96E',
+        goldDim:    '#A07840',
+        moss:       '#2D5A35',
+        crimson:    '#8B3D52',
+        // Text
+        cream:      '#F0EBE3',
+        muted:      '#A89FC0',
+        dim:        '#6B6480',
+        // Tombstone stone colours (keep)
+        stone:      '#545770',
+        mausoleum:  '#3C3489',
       },
       fontFamily: {
         pixel: ['var(--font-pixel)', 'monospace'],

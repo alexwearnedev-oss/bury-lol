@@ -11,6 +11,8 @@ export interface Grave {
   created_at: string;
   status: string;
   report_count: number;
+  icon: string | null;
+  visit_count: number;
 }
 
 export interface Stats {

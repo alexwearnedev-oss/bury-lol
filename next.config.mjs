@@ -15,7 +15,7 @@ const securityHeaders = [
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com"
         : "script-src 'self' 'unsafe-inline' https://js.stripe.com",
       "frame-src https://js.stripe.com https://hooks.stripe.com",
-      "img-src 'self' data: blob:",
+      "img-src 'self' data: blob: https://cdn.jsdelivr.net",
       // Dev needs localhost for webpack HMR websocket
       isDev
         ? "connect-src 'self' ws://localhost:* http://localhost:* https://*.supabase.co wss://*.supabase.co https://api.resend.com"

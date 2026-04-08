@@ -18,6 +18,7 @@ export const checkoutSchema = z.object({
     .optional()
     .transform((val) => (val ? stripHtml(val) : undefined)),
   tier: z.number().int().min(1).max(4),
+  icon: z.string().max(8).optional(),
 });
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;

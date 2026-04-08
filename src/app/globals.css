@@ -3,15 +3,26 @@
 @tailwind utilities;
 
 body {
-  background-color: #08080f;
-  color: #F5F0E8;
+  background-color: #0D0B1E;
+  color: #F0EBE3;
   font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* ── Pixel border utility ────────────────────────────────────────────────── */
+.pixel-border {
+  border: 2px solid #2A2450;
+  box-shadow: inset 0 0 0 1px #1A1835;
+}
+
+.pixel-border-purple {
+  border: 2px solid #6B5DB8;
+  box-shadow: inset 0 0 0 1px #4A3B8C, 0 0 12px rgba(107, 93, 184, 0.2);
 }
 
 /* ── Mausoleum animated border ───────────────────────────────────────────── */
 @keyframes mausoleum-pulse {
-  0%, 100% { box-shadow: 0 0 8px 2px rgba(60, 52, 137, 0.45); }
-  50%       { box-shadow: 0 0 20px 6px rgba(60, 52, 137, 0.8); }
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(107, 93, 184, 0.35); }
+  50%       { box-shadow: 0 0 22px 6px rgba(107, 93, 184, 0.7); }
 }
 .tombstone-mausoleum {
   animation: mausoleum-pulse 2s ease-in-out infinite;
@@ -27,35 +38,137 @@ body {
   80%  { transform: translateX(80vw)               translateY(5px)   scaleX(-1); }
   100% { transform: translateX(calc(100vw + 60px)) translateY(0px)   scaleX(-1); }
 }
+@keyframes bat-fly-low {
+  0%   { transform: translateX(calc(100vw + 60px)) translateY(0px)   scaleX(-1); }
+  15%  { transform: translateX(75vw)               translateY(14px)  scaleX(-1); }
+  35%  { transform: translateX(55vw)               translateY(-8px)  scaleX(-1); }
+  50%  { transform: translateX(45vw)               translateY(0px)   scaleX(1); }
+  70%  { transform: translateX(25vw)               translateY(10px)  scaleX(1); }
+  85%  { transform: translateX(10vw)               translateY(-6px)  scaleX(1); }
+  100% { transform: translateX(-60px)              translateY(0px)   scaleX(1); }
+}
+@keyframes bat-fly-high {
+  0%   { transform: translateX(-60px)  translateY(0px)    scaleX(1); }
+  30%  { transform: translateX(30vw)   translateY(-24px)  scaleX(1); }
+  50%  { transform: translateX(50vw)   translateY(-10px)  scaleX(-1); }
+  70%  { transform: translateX(70vw)   translateY(-20px)  scaleX(-1); }
+  100% { transform: translateX(calc(100vw + 60px)) translateY(0px) scaleX(-1); }
+}
 
-/* Wing-flap within flight */
 @keyframes bat-wings {
   0%, 100% { transform: scaleY(1); }
-  50%       { transform: scaleY(0.4); }
+  50%       { transform: scaleY(0.35); }
+}
+@keyframes bat-wings-fast {
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(0.3); }
 }
 
-.bat-fly {
-  animation: bat-fly linear infinite;
-}
-.bat-fly svg {
-  animation: bat-wings 0.3s ease-in-out infinite;
-}
+.bat-fly       { animation: bat-fly      linear infinite; }
+.bat-fly-low   { animation: bat-fly-low  linear infinite; }
+.bat-fly-high  { animation: bat-fly-high linear infinite; }
+.bat-fly svg       { animation: bat-wings      0.30s ease-in-out infinite; }
+.bat-fly-low svg   { animation: bat-wings-fast 0.22s ease-in-out infinite; }
+.bat-fly-high svg  { animation: bat-wings      0.36s ease-in-out infinite; }
 
-/* ── Pixel font utility ───────────────────────────────────────────────────── */
+/* ── Ghost animation ─────────────────────────────────────────────────────── */
+@keyframes ghost-bob {
+  0%, 100% { transform: translateY(0px);    opacity: 0.72; }
+  50%       { transform: translateY(-14px); opacity: 0.90; }
+}
+@keyframes ghost-wander-1 {
+  0%        { left: 18%; top: 54%; }
+  20%       { left: 30%; top: 48%; }
+  40%       { left: 52%; top: 55%; }
+  60%       { left: 44%; top: 46%; }
+  80%       { left: 26%; top: 52%; }
+  100%      { left: 18%; top: 54%; }
+}
+@keyframes ghost-wander-2 {
+  0%        { left: 62%; top: 48%; }
+  25%       { left: 72%; top: 55%; }
+  50%       { left: 58%; top: 44%; }
+  75%       { left: 68%; top: 52%; }
+  100%      { left: 62%; top: 48%; }
+}
+@keyframes ghost-fade {
+  0%, 100%  { opacity: 0; }
+  8%, 92%   { opacity: 0.75; }
+}
+.ghost-1 { animation: ghost-bob 3.8s ease-in-out infinite, ghost-wander-1 32s ease-in-out infinite, ghost-fade 32s ease-in-out infinite; }
+.ghost-2 { animation: ghost-bob 4.4s ease-in-out infinite reverse, ghost-wander-2 38s ease-in-out infinite 6s, ghost-fade 38s ease-in-out infinite 6s; }
+
+@keyframes ghost-wander-3 {
+  0%   { left: 4%;  top: 68%; }
+  20%  { left: 18%; top: 58%; }
+  40%  { left: 32%; top: 66%; }
+  60%  { left: 22%; top: 74%; }
+  80%  { left: 10%; top: 62%; }
+  100% { left: 4%;  top: 68%; }
+}
+@keyframes ghost-wander-4 {
+  0%   { left: 88%; top: 56%; }
+  25%  { left: 70%; top: 64%; }
+  50%  { left: 48%; top: 58%; }
+  75%  { left: 62%; top: 70%; }
+  100% { left: 88%; top: 56%; }
+}
+.ghost-3 { animation: ghost-bob 3.4s ease-in-out infinite, ghost-wander-3 26s ease-in-out infinite 2s, ghost-fade 26s ease-in-out infinite 2s; }
+.ghost-4 { animation: ghost-bob 4.1s ease-in-out infinite reverse, ghost-wander-4 30s ease-in-out infinite 8s, ghost-fade 30s ease-in-out infinite 8s; }
+
+/* ── Pixel font utilities ─────────────────────────────────────────────────── */
 .font-pixel { font-family: var(--font-pixel), monospace; }
 .font-vt323 { font-family: var(--font-vt323), monospace; }
 
-/* ── Pixel cursor for interactive elements ───────────────────────────────── */
+/* ── Pixel button ────────────────────────────────────────────────────────── */
 .pixel-btn {
   image-rendering: pixelated;
   cursor: pointer;
-  transition: filter 0.1s;
+  transition: filter 0.1s, transform 0.1s;
 }
-.pixel-btn:hover { filter: brightness(1.3); }
+.pixel-btn:hover  { filter: brightness(1.25); }
+.pixel-btn:active { transform: translateY(1px); }
 
-/* ── Scanline overlay (subtle, optional) ─────────────────────────────────── */
-/* Uncomment to add a very subtle CRT scanline effect:
-.graveyard-scanlines::after {
+/* ── Purple CTA button ───────────────────────────────────────────────────── */
+.btn-purple {
+  background: #6B5DB8;
+  color: #F0EBE3;
+  border: 2px solid #9B8FD8;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.btn-purple:hover {
+  background: #7D6FCA;
+  box-shadow: 0 0 14px rgba(107, 93, 184, 0.5);
+}
+.btn-purple:active { background: #4A3B8C; }
+
+/* ── Outline button ──────────────────────────────────────────────────────── */
+.btn-outline {
+  background: transparent;
+  color: #F0EBE3;
+  border: 2px solid #2A2450;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.btn-outline:hover {
+  border-color: #6B5DB8;
+  box-shadow: 0 0 10px rgba(107, 93, 184, 0.25);
+}
+
+/* ── Stat pill ───────────────────────────────────────────────────────────── */
+.stat-pill {
+  background: #12102A;
+  border: 1px solid #2A2450;
+  padding: 10px 20px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Scanline overlay (subtle CRT feel) ──────────────────────────────────── */
+.scanlines::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -63,10 +176,50 @@ body {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0,0,0,0.03) 2px,
-    rgba(0,0,0,0.03) 4px
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
   );
   pointer-events: none;
-  z-index: 100;
+  z-index: 1;
 }
-*/
+
+/* ── Pixel input ─────────────────────────────────────────────────────────── */
+.pixel-input {
+  background: #12102A;
+  border: 2px solid #2A2450;
+  color: #F0EBE3;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.pixel-input:focus {
+  border-color: #6B5DB8;
+  box-shadow: 0 0 0 2px rgba(107, 93, 184, 0.2);
+}
+.pixel-input::placeholder { color: #6B6480; }
+
+/* ── Cloud drift animations ──────────────────────────────────────────────── */
+@keyframes cloud-drift-1 {
+  0%, 100% { transform: translateX(0px);   }
+  50%       { transform: translateX(48px);  }
+}
+@keyframes cloud-drift-2 {
+  0%, 100% { transform: translateX(0px);   }
+  50%       { transform: translateX(-36px); }
+}
+.cloud-1 { animation: cloud-drift-1 52s ease-in-out infinite; }
+.cloud-2 { animation: cloud-drift-2 68s ease-in-out infinite 14s; }
+
+/* ── Fade-in animation ───────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.3s ease forwards; }
+
+/* ── Step progress bar ───────────────────────────────────────────────────── */
+@keyframes stepGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(107,93,184,0.4); }
+  50%       { box-shadow: 0 0 14px rgba(107,93,184,0.8); }
+}
+.step-active { animation: stepGlow 1.5s ease-in-out infinite; }
+

@@ -57,10 +57,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
     }
 
-    const subject = meta.subject;
-    const epitaph = meta.epitaph || null;
+    const subject   = meta.subject;
+    const epitaph   = meta.epitaph   || null;
     const buried_by = meta.buried_by || 'Anonymous';
-    const tier = parseInt(meta.tier);
+    const tier      = parseInt(meta.tier);
+    const icon      = meta.icon      || null;
 
     // Check blocklist — still write to DB for audit trail, but auto-reject
     const isBlocked =
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
         epitaph,
         buried_by,
         tier,
+        icon,
         stripe_session_id: session.id,
         amount_paid: session.amount_total ?? 0,
         paid_at: new Date().toISOString(),

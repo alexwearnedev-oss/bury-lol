@@ -1,32 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Tombstone from './Tombstone';
 import type { Grave } from '@/lib/types';
 
 interface GraveModalProps {
-  grave: Grave;
+  grave:   Grave;
   onClose: () => void;
 }
 
 export default function GraveModal({ grave, onClose }: GraveModalProps) {
-  const [copied, setCopied] = useState(false);
-  const [reported, setReported] = useState(false);
+  const [copied,    setCopied]    = useState(false);
+  const [reported,  setReported]  = useState(false);
   const [reporting, setReporting] = useState(false);
 
-  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/grave/${grave.share_token}`;
+  const shareUrl  = `${typeof window !== 'undefined' ? window.location.origin : ''}/grave/${grave.share_token}`;
   const tweetText = `I just buried ${grave.subject} on bury.lol for $${(grave.amount_paid / 100).toFixed(0)}. RIP. ${shareUrl}`;
 
-  // Close on Escape
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose]);
 
-  // Prevent body scroll
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -48,92 +45,118 @@ export default function GraveModal({ grave, onClose }: GraveModalProps) {
         body: JSON.stringify({ shareToken: grave.share_token }),
       });
       setReported(true);
-    } catch {
-      // Silently fail
-    } finally {
-      setReporting(false);
-    }
+    } catch { /* silently fail */ }
+    finally { setReporting(false); }
   };
 
   const buriedDate = new Date(grave.created_at).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    year: 'numeric', month: 'long', day: 'numeric',
   });
 
+  const tierNames: Record<number, string> = {
+    1: 'Shallow grave', 2: 'Proper burial', 3: 'Deluxe tombstone', 4: 'The Mausoleum',
+  };
+
   return (
-    // Backdrop
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
-      {/* Modal */}
       <div
-        className="relative max-h-[90vh] w-full max-w-sm overflow-y-auto rounded border border-stone/30 bg-bg p-6"
-        onClick={(e) => e.stopPropagation()}
+        className="pixel-border relative max-h-[90vh] w-full max-w-sm overflow-y-auto"
+        style={{ background: '#12102A' }}
+        onClick={e => e.stopPropagation()}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute right-3 top-3 text-stone transition-colors hover:text-cream"
-          aria-label="Close"
-        >
-          ✕
-        </button>
+        {/* Header bar */}
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <span className="text-purple" style={{ fontFamily: 'var(--font-pixel)', fontSize: 7 }}>
+            ✦ R.I.P. ✦
+          </span>
+          <button
+            onClick={onClose}
+            className="text-dim transition-colors hover:text-cream"
+            style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
 
         {/* Tombstone */}
-        <div className="mb-5 flex justify-center">
+        <div className="flex justify-center border-b border-border bg-black/30 py-6">
           <Tombstone
             subject={grave.subject}
             epitaph={grave.epitaph ?? undefined}
             buried_by={grave.buried_by}
+            icon={grave.icon}
             tier={grave.tier}
           />
         </div>
 
         {/* Details */}
-        <div className="mb-4 space-y-1 text-center">
-          <h2 className="font-serif text-xl font-bold text-cream">
+        <div className="border-b border-border p-4">
+          <h2
+            className="mb-1 text-center text-cream"
+            style={{ fontFamily: 'var(--font-vt323)', fontSize: 26 }}
+          >
             RIP {grave.subject}
           </h2>
           {grave.epitaph && (
-            <p className="text-sm italic text-stone">&ldquo;{grave.epitaph}&rdquo;</p>
+            <p
+              className="mb-2 text-center text-muted italic"
+              style={{ fontFamily: 'var(--font-vt323)', fontSize: 17 }}
+            >
+              &ldquo;{grave.epitaph}&rdquo;
+            </p>
           )}
-          <p className="text-xs text-stone/70">
-            Buried by {grave.buried_by} · {buriedDate}
-          </p>
-          <p className="text-xs text-stone/50">
-            ${(grave.amount_paid / 100).toFixed(0)} paid
-          </p>
+          <div className="space-y-1 text-center">
+            <p className="text-dim" style={{ fontFamily: 'var(--font-vt323)', fontSize: 15 }}>
+              Buried by {grave.buried_by} · {buriedDate}
+            </p>
+            <p className="text-dim" style={{ fontFamily: 'var(--font-vt323)', fontSize: 14 }}>
+              ${(grave.amount_paid / 100).toFixed(0)} paid · {tierNames[grave.tier]}
+            </p>
+          </div>
         </div>
 
-        {/* Share buttons */}
-        <div className="mb-3 flex gap-2">
-          <a
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 rounded border border-stone/30 py-2 text-center text-xs text-cream transition-colors hover:border-cream/50"
+        {/* Actions */}
+        <div className="p-4">
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline py-2 text-center"
+              style={{ fontFamily: 'var(--font-pixel)', fontSize: 6 }}
+            >
+              Share on X
+            </a>
+            <button
+              onClick={handleCopy}
+              className="btn-outline py-2"
+              style={{ fontFamily: 'var(--font-pixel)', fontSize: 6 }}
+            >
+              {copied ? '✓ Copied!' : 'Copy link'}
+            </button>
+          </div>
+          <Link
+            href={`/grave/${grave.share_token}`}
+            className="btn-purple mb-3 block w-full py-2 text-center"
+            style={{ fontFamily: 'var(--font-pixel)', fontSize: 6 }}
+            onClick={onClose}
           >
-            Share on X
-          </a>
-          <button
-            onClick={handleCopy}
-            className="flex-1 rounded border border-stone/30 py-2 text-xs text-cream transition-colors hover:border-cream/50"
-          >
-            {copied ? 'Copied!' : 'Copy link'}
-          </button>
-        </div>
-
-        {/* Report */}
-        <div className="text-center">
-          <button
-            onClick={handleReport}
-            disabled={reported || reporting}
-            className="text-xs text-stone/40 transition-colors hover:text-stone disabled:cursor-default"
-          >
-            {reported ? 'Reported' : reporting ? 'Reporting...' : 'Report this grave'}
-          </button>
+            View grave page →
+          </Link>
+          <div className="text-center">
+            <button
+              onClick={handleReport}
+              disabled={reported || reporting}
+              className="text-dim/40 transition-colors hover:text-dim disabled:cursor-default"
+              style={{ fontFamily: 'var(--font-pixel)', fontSize: 5 }}
+            >
+              {reported ? 'Reported' : reporting ? 'Reporting...' : 'Report this grave'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

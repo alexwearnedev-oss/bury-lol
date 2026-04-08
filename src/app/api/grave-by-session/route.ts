@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   // Use admin client since the grave may still be 'pending' (not visible via RLS)
   const { data, error } = await supabaseAdmin
     .from('graves')
-    .select('subject, epitaph, buried_by, tier, amount_paid, share_token')
+    .select('subject, epitaph, buried_by, tier, amount_paid, share_token, icon')
     .eq('stripe_session_id', sessionId)
     .single();
 

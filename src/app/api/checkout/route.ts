@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { subject, epitaph, buried_by, tier } = result.data;
+  const { subject, epitaph, buried_by, tier, icon } = result.data;
   const tierKey = tier as keyof typeof TIER_CONFIG;
   const config = TIER_CONFIG[tierKey];
 
@@ -59,9 +59,10 @@ export async function POST(request: NextRequest) {
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/bury`,
       metadata: {
         subject,
-        epitaph: epitaph || '',
+        epitaph:   epitaph   || '',
         buried_by: buried_by || 'Anonymous',
-        tier: String(tier),
+        tier:      String(tier),
+        icon:      icon       || '',
       },
     });
 
