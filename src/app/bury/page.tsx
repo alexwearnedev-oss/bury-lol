@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Tombstone from '@/components/Tombstone';
 import EmojiPicker from '@/components/EmojiPicker';

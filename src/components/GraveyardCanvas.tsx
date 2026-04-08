@@ -861,6 +861,7 @@ function PicketFence({ cx, cy, zoom, dir = 'left' }: { cx: number; cy: number; z
 }
 
 // ── Pixel mist — wispy horizontal strands in multiple animated layers ────────
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PixelMist({
   left, top, width, height, seedBase, dense, opMul = 1, cls,
 }: {
