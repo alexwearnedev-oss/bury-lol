@@ -23,14 +23,16 @@ export default async function StatsPage() {
       supabase.from('stats').select('total_approved, total_revenue_cents').single(),
       supabase
         .from('graves')
-        .select('subject, epitaph, buried_by, created_at, icon, share_token')
+        .select('subject, epitaph, buried_by, created_at, icon, share_token, tier, grid_x')
         .eq('status', 'approved')
+        .or('tier.eq.4,grid_x.not.is.null')
         .order('created_at', { ascending: false })
         .limit(5),
       supabase
         .from('graves')
-        .select('subject, created_at')
+        .select('subject, created_at, tier, grid_x')
         .eq('status', 'approved')
+        .or('tier.eq.4,grid_x.not.is.null')
         .order('created_at', { ascending: true })
         .limit(1)
         .single(),
@@ -38,15 +40,18 @@ export default async function StatsPage() {
         .from('graves')
         .select('id', { count: 'exact' })
         .eq('status', 'approved')
+        .or('tier.eq.4,grid_x.not.is.null')
         .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
       supabase
         .from('graves')
-        .select('tier')
-        .eq('status', 'approved'),
+        .select('tier, grid_x')
+        .eq('status', 'approved')
+        .or('tier.eq.4,grid_x.not.is.null'),
       supabase
         .from('graves')
         .select('id, subject, epitaph, buried_by, icon, visit_count, share_token, created_at, tier, amount_paid, grid_x, grid_y, status, report_count')
         .eq('status', 'approved')
+        .or('tier.eq.4,grid_x.not.is.null')
         .order('visit_count', { ascending: false })
         .limit(10),
     ]);

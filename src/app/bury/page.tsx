@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Nav from '@/components/Nav';
-import Tombstone from '@/components/Tombstone';
+import Tombstone, { TIER_DIMS } from '@/components/Tombstone';
 import EmojiPicker from '@/components/EmojiPicker';
 
 const TIERS = [
@@ -54,14 +54,16 @@ function StepBar({ current }: { current: number }) {
 }
 
 export default function BuryPage() {
-  const [step,     setStep]     = useState(1);
-  const [subject,  setSubject]  = useState('');
-  const [epitaph,  setEpitaph]  = useState('');
-  const [buriedBy, setBuriedBy] = useState('');
-  const [icon,     setIcon]     = useState('🪦');
-  const [tier,     setTier]     = useState<1|2|3|4>(2);
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState('');
+  const [step,       setStep]       = useState(1);
+  const [subject,    setSubject]    = useState('');
+  const [epitaph,    setEpitaph]    = useState('');
+  const [buriedBy,   setBuriedBy]   = useState('');
+  const [birthYear,  setBirthYear]  = useState('');
+  const [deathYear,  setDeathYear]  = useState('');
+  const [icon,       setIcon]       = useState('🪦');
+  const [tier,       setTier]       = useState<1|2|3|4>(2);
+  const [loading,    setLoading]    = useState(false);
+  const [error,      setError]      = useState('');
 
   const handleSubmit = async () => {
     setError('');
@@ -155,32 +157,30 @@ export default function BuryPage() {
               <div className="mb-4 grid grid-cols-2 gap-3">
                 <div>
                   <label className="mb-1 block text-muted" style={{ fontFamily: 'var(--font-pixel)', fontSize: 7 }}>
-                    BIRTH YEAR
+                    BIRTH YEAR <span className="text-dim">(optional)</span>
                   </label>
                   <input
                     type="text"
                     placeholder="1999"
                     maxLength={4}
+                    value={birthYear}
+                    onChange={e => setBirthYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
                     className="pixel-input w-full px-3 py-2"
                     style={{ fontFamily: 'var(--font-vt323)', fontSize: 20 }}
-                    readOnly
-                    disabled
-                    title="For decoration only — included in epitaph"
                   />
                 </div>
                 <div>
                   <label className="mb-1 block text-muted" style={{ fontFamily: 'var(--font-pixel)', fontSize: 7 }}>
-                    DEATH YEAR
+                    DEATH YEAR <span className="text-dim">(optional)</span>
                   </label>
                   <input
                     type="text"
                     placeholder="2024"
                     maxLength={4}
+                    value={deathYear}
+                    onChange={e => setDeathYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
                     className="pixel-input w-full px-3 py-2"
                     style={{ fontFamily: 'var(--font-vt323)', fontSize: 20 }}
-                    readOnly
-                    disabled
-                    title="For decoration only — included in epitaph"
                   />
                 </div>
               </div>
@@ -298,7 +298,7 @@ export default function BuryPage() {
                       }`}
                       style={{ background: tier === t.tier ? undefined : '#0D0B1E' }}
                     >
-                      <div className="mb-1 flex items-center justify-between">
+                      <div className="mb-2 flex items-center justify-between">
                         <span className="text-gold" style={{ fontFamily: 'var(--font-pixel)', fontSize: 10 }}>
                           {t.price}
                         </span>
@@ -307,6 +307,20 @@ export default function BuryPage() {
                         {tier === t.tier && (
                           <span className="text-purple" style={{ fontFamily: 'var(--font-pixel)', fontSize: 6 }}>▶</span>
                         )}
+                      </div>
+                      {/* Tombstone shape preview — scaled to max 70px tall */}
+                      <div className="mb-2 flex justify-center">
+                        {(() => {
+                          const { w, h } = TIER_DIMS[t.tier];
+                          const scale = 70 / h;
+                          return (
+                            <Tombstone
+                              subject="" tier={t.tier} previewOnly
+                              width={Math.round(w * scale)}
+                              height={70}
+                            />
+                          );
+                        })()}
                       </div>
                       <div className="text-cream" style={{ fontFamily: 'var(--font-pixel)', fontSize: 6 }}>
                         {t.name}

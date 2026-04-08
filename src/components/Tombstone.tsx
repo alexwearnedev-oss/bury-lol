@@ -27,14 +27,15 @@ function emojiToTwemojiUrl(emoji: string): string {
 }
 
 interface TombstoneProps {
-  subject:    string;
-  epitaph?:   string;
-  buried_by?: string;
-  tier:       1 | 2 | 3 | 4;
-  icon?:      string | null;
-  className?: string;
-  width?:     number;
-  height?:    number;
+  subject:     string;
+  epitaph?:    string;
+  buried_by?:  string;
+  tier:        1 | 2 | 3 | 4;
+  icon?:       string | null;
+  className?:  string;
+  width?:      number;
+  height?:     number;
+  previewOnly?: boolean; // show stone shape only — no text or icon
 }
 
 // Wrap text into lines ≤ maxChars, capped at maxLines
@@ -275,16 +276,19 @@ function Tier4Mausoleum({ subject, epitaph, hasIcon }: { subject: string; epitap
 // ── Main export ───────────────────────────────────────────────────────────────
 export default function Tombstone({
   subject, epitaph, tier, icon, className = '',
-  width: overrideW, height: overrideH,
+  width: overrideW, height: overrideH, previewOnly = false,
 }: TombstoneProps) {
   const { w, h } = TIER_DIMS[tier];
   const displayW = overrideW ?? w;
   const displayH = overrideH ?? h;
-  const hasIcon  = !!icon;
+  // previewOnly: suppress all text and icon rendering
+  const hasIcon  = previewOnly ? true : !!icon;
+  const displaySubject = previewOnly ? '' : subject;
+  const displayEpitaph = previewOnly ? undefined : epitaph;
 
   // Calculate icon overlay in screen-space pixels
   let iconEl: React.ReactNode = null;
-  if (hasIcon && icon) {
+  if (!previewOnly && hasIcon && icon) {
     const { cx, cy, r } = ICON_LAYOUT[tier];
     const iconSize = r * displayW;
     const iconLeft = cx * displayW - iconSize / 2;
@@ -321,10 +325,10 @@ export default function Tombstone({
         style={{ imageRendering: 'pixelated', display: 'block' }}
         shapeRendering="crispEdges"
       >
-        {tier === 1 && <Tier1 subject={subject} hasIcon={hasIcon} />}
-        {tier === 2 && <Tier2 subject={subject} epitaph={epitaph} hasIcon={hasIcon} />}
-        {tier === 3 && <Tier3 subject={subject} epitaph={epitaph} hasIcon={hasIcon} />}
-        {tier === 4 && <Tier4Mausoleum subject={subject} epitaph={epitaph} hasIcon={hasIcon} />}
+        {tier === 1 && <Tier1 subject={displaySubject} hasIcon={hasIcon} />}
+        {tier === 2 && <Tier2 subject={displaySubject} epitaph={displayEpitaph} hasIcon={hasIcon} />}
+        {tier === 3 && <Tier3 subject={displaySubject} epitaph={displayEpitaph} hasIcon={hasIcon} />}
+        {tier === 4 && <Tier4Mausoleum subject={displaySubject} epitaph={displayEpitaph} hasIcon={hasIcon} />}
       </svg>
       {iconEl}
     </div>

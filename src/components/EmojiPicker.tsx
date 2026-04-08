@@ -43,8 +43,13 @@ export default function EmojiPicker({ value, onChange }: EmojiPickerProps) {
 
   const filtered = useMemo(() => {
     if (!search) return null;
-    // Simple filter: show all emoji (we can't text-search emoji chars, so just show all when typing)
-    return ALL_EMOJI;
+    const q = search.toLowerCase();
+    // Filter categories whose name matches the search term, then flatten
+    const matchingCategories = Object.entries(EMOJI_CATEGORIES)
+      .filter(([cat]) => cat.toLowerCase().includes(q))
+      .flatMap(([, emojis]) => emojis);
+    // If no category matches, show all emojis
+    return matchingCategories.length > 0 ? matchingCategories : ALL_EMOJI;
   }, [search]);
 
   const displayEmoji = filtered ?? EMOJI_CATEGORIES[activeTab] ?? [];
