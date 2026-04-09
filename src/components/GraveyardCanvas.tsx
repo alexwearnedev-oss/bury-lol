@@ -1315,17 +1315,15 @@ export default function GraveyardCanvas({ initialGraves }: Props) {
     return () => el.removeEventListener('wheel', handler);
   }, []);
 
-  // Map graves to display grid
-  const { graveMap, maxRow } = useMemo(() => {
-    const graveMap = new Map<string, Grave>();
-    let maxRow = 0;
+  // Map graves to display grid — totalRows is always the fixed DISP_ROWS constant
+  const graveMap = useMemo(() => {
+    const map = new Map<string, Grave>();
     for (const g of graves) {
       if (g.grid_x == null || g.grid_y == null) continue;
       const { col, row } = dbToDisp(g.grid_x, g.grid_y);
-      graveMap.set(`${col},${row}`, g);
-      if (row > maxRow) maxRow = row;
+      map.set(`${col},${row}`, g);
     }
-    return { graveMap, maxRow };
+    return map;
   }, [graves]);
 
   const totalRows = DISP_ROWS;
