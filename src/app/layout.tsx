@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from 'next/font/local';
+import { Analytics } from '@vercel/analytics/next';
 import "./globals.css";
 
 // Fonts are served from committed WOFF2 files in /public/fonts/ to avoid
@@ -40,6 +41,7 @@ export default function RootLayout({
     <html lang="en" className={`${pressStart2P.variable} ${vt323.variable}`}>
       <body className="min-h-screen bg-bg text-cream antialiased">
         {children}
+        <Analytics />
       </body>
     </html>
   );

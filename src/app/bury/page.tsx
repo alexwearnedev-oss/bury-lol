@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { track } from '@vercel/analytics';
 import Nav from '@/components/Nav';
 import Tombstone, { TIER_DIMS } from '@/components/Tombstone';
 import EmojiPicker from '@/components/EmojiPicker';
@@ -60,15 +61,18 @@ export default function BuryPage() {
   const [subject,       setSubject]       = useState('');
   const [epitaph,       setEpitaph]       = useState('');
   const [buriedBy,      setBuriedBy]      = useState('');
-const [icon,          setIcon]          = useState('🪦');
+  const [icon,          setIcon]          = useState('🪦');
   const [tier,          setTier]          = useState<1|2|3|4>(2);
   const [preferredPlot, setPreferredPlot] = useState<PlotPosition | null>(null);
   const [loading,       setLoading]       = useState(false);
   const [error,         setError]         = useState('');
 
+  useEffect(() => { track('view_bury_page'); }, []);
+
   const handleSubmit = async () => {
     setError('');
     setLoading(true);
+    track('checkout_initiated', { tier });
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -203,7 +207,7 @@ const [icon,          setIcon]          = useState('🪦');
               <button
                 type="button"
                 disabled={!subject.trim()}
-                onClick={() => setStep(2)}
+                onClick={() => { track('funnel_step_1_complete', { has_epitaph: !!epitaph.trim(), has_buried_by: !!buriedBy.trim() }); setStep(2); }}
                 className="btn-purple w-full py-3 disabled:cursor-not-allowed disabled:opacity-40"
                 style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
               >
@@ -236,7 +240,7 @@ const [icon,          setIcon]          = useState('🪦');
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(3)}
+                  onClick={() => { track('funnel_step_2_complete', { icon }); setStep(3); }}
                   className="btn-purple flex-1 py-3"
                   style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
                 >
@@ -316,7 +320,7 @@ const [icon,          setIcon]          = useState('🪦');
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(4)}
+                  onClick={() => { track('funnel_step_3_complete', { tier }); setStep(4); }}
                   className="btn-purple flex-1 py-3"
                   style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
                 >
@@ -349,7 +353,7 @@ const [icon,          setIcon]          = useState('🪦');
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(5)}
+                  onClick={() => { track('funnel_step_4_complete', { has_preferred_plot: !!preferredPlot }); setStep(5); }}
                   className="btn-purple flex-1 py-3"
                   style={{ fontFamily: 'var(--font-pixel)', fontSize: 8 }}
                 >

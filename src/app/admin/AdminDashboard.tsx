@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import type { Grave } from '@/lib/types';
 
 type GraveWithIp = Grave & { ip_hash: string };
@@ -151,7 +152,7 @@ export default function AdminDashboard({ pending, reported, counts }: Props) {
         <div className="mb-8 flex items-center justify-between">
           <h1 className="font-serif text-2xl font-bold text-cream">bury.lol admin</h1>
           <div className="flex items-center gap-4">
-            <a href="/" className="text-xs text-stone hover:text-cream">← back to site</a>
+            <Link href="/" className="text-xs text-stone hover:text-cream">← back to site</Link>
             <button
               onClick={handleLogout}
               className="text-xs text-stone hover:text-red-400"

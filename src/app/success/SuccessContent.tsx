@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { track } from '@vercel/analytics';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Tombstone from '@/components/Tombstone';
@@ -12,6 +13,10 @@ interface Props {
 
 export default function SuccessContent({ grave }: Props) {
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (grave) track('checkout_success', { tier: grave.tier });
+  }, [grave]);
 
   if (!grave) {
     return (
