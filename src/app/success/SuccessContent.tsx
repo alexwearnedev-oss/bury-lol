@@ -34,7 +34,15 @@ export default function SuccessContent({ grave }: Props) {
   }
 
   const graveUrl  = `${typeof window !== 'undefined' ? window.location.origin : ''}/grave/${grave.share_token}`;
-  const tweetText = `I just buried ${grave.subject} on bury.lol for $${(grave.amount_paid / 100).toFixed(0)}. RIP. ${graveUrl}`;
+
+  const tweetText = (() => {
+    switch (grave.tier) {
+      case 1: return `I gave ${grave.subject} a shallow grave for $1. It deserved at least that. ${graveUrl}`;
+      case 3: return `${grave.subject} got a deluxe tombstone on bury.lol. $5 well spent. ${graveUrl}`;
+      case 4: return `I spent $50 to give ${grave.subject} a mausoleum on bury.lol. No regrets. ${graveUrl}`;
+      default: return `I just buried ${grave.subject} on bury.lol for $2. RIP. ${graveUrl}`;
+    }
+  })();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(graveUrl);

@@ -1484,7 +1484,7 @@ export default function GraveyardCanvas({ initialGraves }: Props) {
   useEffect(() => {
     const ch = supabaseClient
       .channel('canvas:graves')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'graves' }, payload => {
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'graves', filter: 'status=eq.approved' }, payload => {
         const g = payload.new as Grave;
         if (g.status === 'approved') {
           setGraves(prev => {
