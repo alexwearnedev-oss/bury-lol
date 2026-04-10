@@ -1,58 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Tombstone from '@/components/Tombstone';
+import type { SuccessPayload } from '@/lib/success-token';
 
-interface GraveData {
-  subject:     string;
-  epitaph:     string | null;
-  buried_by:   string;
-  tier:        1 | 2 | 3 | 4;
-  amount_paid: number;
-  share_token: string;
-  icon:        string | null;
+interface Props {
+  grave: SuccessPayload | null;
 }
 
-export default function SuccessContent() {
-  const searchParams = useSearchParams();
-  const sessionId    = searchParams.get('session_id');
-  const [grave,    setGrave]   = useState<GraveData | null>(null);
-  const [loading,  setLoading] = useState(true);
-  const [copied,   setCopied]  = useState(false);
-
-  useEffect(() => {
-    if (!sessionId) { setLoading(false); return; }
-    fetch(`/api/grave-by-session?session_id=${sessionId}`)
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => { if (data) setGrave(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, [sessionId]);
-
-  const graveUrl  = grave
-    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/grave/${grave.share_token}`
-    : '';
-  const tweetText = grave
-    ? `I just buried ${grave.subject} on bury.lol for $${(grave.amount_paid / 100).toFixed(0)}. RIP. ${graveUrl}`
-    : '';
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(graveUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center" style={{ background: '#0D0B1E' }}>
-        <p className="text-muted" style={{ fontFamily: 'var(--font-pixel)', fontSize: 9 }}>
-          DIGGING...
-        </p>
-      </div>
-    );
-  }
+export default function SuccessContent({ grave }: Props) {
+  const [copied, setCopied] = useState(false);
 
   if (!grave) {
     return (
@@ -73,6 +32,15 @@ export default function SuccessContent() {
       </div>
     );
   }
+
+  const graveUrl  = `${typeof window !== 'undefined' ? window.location.origin : ''}/grave/${grave.share_token}`;
+  const tweetText = `I just buried ${grave.subject} on bury.lol for $${(grave.amount_paid / 100).toFixed(0)}. RIP. ${graveUrl}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(graveUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const isMausoleum = grave.tier === 4;
 

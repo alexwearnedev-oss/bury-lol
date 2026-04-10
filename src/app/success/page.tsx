@@ -1,16 +1,17 @@
-import { Suspense } from 'react';
+import { parseSuccessToken } from '@/lib/success-token';
 import SuccessContent from './SuccessContent';
 
-export default function SuccessPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center bg-bg">
-          <p className="text-stone">Digging...</p>
-        </div>
-      }
-    >
-      <SuccessContent />
-    </Suspense>
-  );
+interface Props {
+  searchParams: Record<string, string | string[] | undefined>;
+}
+
+export default async function SuccessPage({ searchParams }: Props) {
+  const raw = searchParams.t;
+  const tokenStr = typeof raw === 'string' ? raw : null;
+
+  const grave = tokenStr
+    ? await parseSuccessToken(tokenStr, process.env.STRIPE_SECRET_KEY ?? '')
+    : null;
+
+  return <SuccessContent grave={grave} />;
 }

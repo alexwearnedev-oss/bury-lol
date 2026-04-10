@@ -215,7 +215,8 @@ INSERT INTO graves (
 ),
 
 -- ════════════════════════════════════════════════════
--- TIER 2 continued  (grid row 1, cols 0–5)
+-- TIER 2 continued  (display row 2, cols 0–5)
+-- Canonical encoding: grid_x = row*10 + col, grid_y = 0
 -- ════════════════════════════════════════════════════
 
 (
@@ -224,7 +225,7 @@ INSERT INTO graves (
   'A Windows XP Enjoyer',
   2, 200, 'seed_22',
   NOW() - INTERVAL '30 days', 'approved', NOW() - INTERVAL '29 days 22 hours',
-  0, 1, encode(gen_random_bytes(6), 'hex'),
+  20, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '30 days', 'seeded'
 ),
 (
@@ -233,7 +234,7 @@ INSERT INTO graves (
   'Read receipts',
   2, 200, 'seed_23',
   NOW() - INTERVAL '28 days', 'approved', NOW() - INTERVAL '27 days 21 hours',
-  1, 1, encode(gen_random_bytes(6), 'hex'),
+  21, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '28 days', 'seeded'
 ),
 (
@@ -242,7 +243,7 @@ INSERT INTO graves (
   'Silicon Valley VCs',
   2, 200, 'seed_24',
   NOW() - INTERVAL '26 days', 'approved', NOW() - INTERVAL '25 days 23 hours',
-  2, 1, encode(gen_random_bytes(6), 'hex'),
+  22, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '26 days', 'seeded'
 ),
 (
@@ -251,7 +252,7 @@ INSERT INTO graves (
   'The New York Times',
   2, 200, 'seed_25',
   NOW() - INTERVAL '24 days', 'approved', NOW() - INTERVAL '23 days 20 hours',
-  3, 1, encode(gen_random_bytes(6), 'hex'),
+  23, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '24 days', 'seeded'
 ),
 (
@@ -260,7 +261,7 @@ INSERT INTO graves (
   'The Smartphone',
   2, 200, 'seed_26',
   NOW() - INTERVAL '22 days', 'approved', NOW() - INTERVAL '21 days 22 hours',
-  4, 1, encode(gen_random_bytes(6), 'hex'),
+  24, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '22 days', 'seeded'
 ),
 (
@@ -269,12 +270,13 @@ INSERT INTO graves (
   'The News Cycle',
   2, 200, 'seed_27',
   NOW() - INTERVAL '20 days', 'approved', NOW() - INTERVAL '19 days 21 hours',
-  5, 1, encode(gen_random_bytes(6), 'hex'),
+  25, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '20 days', 'seeded'
 ),
 
 -- ════════════════════════════════════════════════════
--- TIER 1 — Shallow Graves  (grid row 1, cols 6–18)
+-- TIER 1 — Shallow Graves  (display row 2 cols 6–9, row 3 cols 0–8)
+-- Canonical encoding: grid_x = row*10 + col, grid_y = 0
 -- ════════════════════════════════════════════════════
 
 (
@@ -283,7 +285,7 @@ INSERT INTO graves (
   'Circa 2014',
   1, 100, 'seed_28',
   NOW() - INTERVAL '18 days', 'approved', NOW() - INTERVAL '17 days 23 hours',
-  6, 1, encode(gen_random_bytes(6), 'hex'),
+  26, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '18 days', 'seeded'
 ),
 (
@@ -292,7 +294,7 @@ INSERT INTO graves (
   'Anxiety Merchants Inc.',
   1, 100, 'seed_29',
   NOW() - INTERVAL '17 days', 'approved', NOW() - INTERVAL '16 days 22 hours',
-  7, 1, encode(gen_random_bytes(6), 'hex'),
+  27, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '17 days', 'seeded'
 ),
 (
@@ -301,7 +303,7 @@ INSERT INTO graves (
   'The Internet (briefly)',
   1, 100, 'seed_30',
   NOW() - INTERVAL '16 days', 'approved', NOW() - INTERVAL '15 days 21 hours',
-  8, 1, encode(gen_random_bytes(6), 'hex'),
+  28, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '16 days', 'seeded'
 ),
 (
@@ -310,7 +312,7 @@ INSERT INTO graves (
   'Your Uncle Gary',
   1, 100, 'seed_31',
   NOW() - INTERVAL '15 days', 'approved', NOW() - INTERVAL '14 days 23 hours',
-  9, 1, encode(gen_random_bytes(6), 'hex'),
+  29, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '15 days', 'seeded'
 ),
 (
@@ -319,7 +321,7 @@ INSERT INTO graves (
   'The First Commenter',
   1, 100, 'seed_32',
   NOW() - INTERVAL '14 days', 'approved', NOW() - INTERVAL '13 days 22 hours',
-  10, 1, encode(gen_random_bytes(6), 'hex'),
+  30, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '14 days', 'seeded'
 ),
 (
@@ -328,7 +330,7 @@ INSERT INTO graves (
   'Sleep Scientists',
   1, 100, 'seed_33',
   NOW() - INTERVAL '13 days', 'approved', NOW() - INTERVAL '12 days 20 hours',
-  11, 1, encode(gen_random_bytes(6), 'hex'),
+  31, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '13 days', 'seeded'
 ),
 (
@@ -337,7 +339,7 @@ INSERT INTO graves (
   'The Cloud',
   1, 100, 'seed_34',
   NOW() - INTERVAL '12 days', 'approved', NOW() - INTERVAL '11 days 23 hours',
-  12, 1, encode(gen_random_bytes(6), 'hex'),
+  32, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '12 days', 'seeded'
 ),
 (
@@ -346,7 +348,7 @@ INSERT INTO graves (
   'My Past Self',
   1, 100, 'seed_35',
   NOW() - INTERVAL '11 days', 'approved', NOW() - INTERVAL '10 days 21 hours',
-  13, 1, encode(gen_random_bytes(6), 'hex'),
+  33, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '11 days', 'seeded'
 ),
 (
@@ -355,7 +357,7 @@ INSERT INTO graves (
   'A Handheld Believer',
   1, 100, 'seed_36',
   NOW() - INTERVAL '10 days', 'approved', NOW() - INTERVAL '9 days 22 hours',
-  14, 1, encode(gen_random_bytes(6), 'hex'),
+  34, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '10 days', 'seeded'
 ),
 (
@@ -364,7 +366,7 @@ INSERT INTO graves (
   'Apple App Store',
   1, 100, 'seed_37',
   NOW() - INTERVAL '9 days', 'approved', NOW() - INTERVAL '8 days 20 hours',
-  15, 1, encode(gen_random_bytes(6), 'hex'),
+  35, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '9 days', 'seeded'
 ),
 (
@@ -373,7 +375,7 @@ INSERT INTO graves (
   'Self-delusion',
   1, 100, 'seed_38',
   NOW() - INTERVAL '7 days', 'approved', NOW() - INTERVAL '6 days 23 hours',
-  16, 1, encode(gen_random_bytes(6), 'hex'),
+  36, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '7 days', 'seeded'
 ),
 (
@@ -382,7 +384,7 @@ INSERT INTO graves (
   'Jeeves',
   1, 100, 'seed_39',
   NOW() - INTERVAL '5 days', 'approved', NOW() - INTERVAL '4 days 22 hours',
-  17, 1, encode(gen_random_bytes(6), 'hex'),
+  37, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '5 days', 'seeded'
 ),
 (
@@ -391,7 +393,7 @@ INSERT INTO graves (
   'Facebook (2004-ish)',
   1, 100, 'seed_40',
   NOW() - INTERVAL '3 days', 'approved', NOW() - INTERVAL '2 days 21 hours',
-  18, 1, encode(gen_random_bytes(6), 'hex'),
+  38, 0, encode(gen_random_bytes(6), 'hex'),
   NOW() - INTERVAL '3 days', 'seeded'
 );
 

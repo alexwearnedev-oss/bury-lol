@@ -3,13 +3,20 @@ import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { reportRateLimit } from '@/lib/rate-limit';
 import { hashIP } from '@/lib/hash-ip';
+import { getClientIp } from '@/lib/get-client-ip';
 
 const schema = z.object({
   shareToken: z.string().min(1).max(20),
 });
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
   const result = schema.safeParse(body);
 
   if (!result.success) {
@@ -17,7 +24,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { shareToken } = result.data;
-  const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+  const ip = getClientIp(request);
   const ipHash = hashIP(ip);
 
   // Rate limit: 1 report per IP per grave

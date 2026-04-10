@@ -4,6 +4,7 @@ import { Resend } from 'resend';
 import { stripe } from '@/lib/stripe';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { hashIP } from '@/lib/hash-ip';
+import { getClientIp } from '@/lib/get-client-ip';
 import GraveConfirmationEmail from '../../../../emails/GraveConfirmation';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
     const buried_by   = meta.buried_by   || 'Anonymous';
     const tier        = parseInt(meta.tier);
     const icon        = meta.icon        || null;
+    const share_token = meta.share_token || null; // pre-generated at checkout; falls back to DB default if absent
     const preferred_x = meta.preferred_x ? parseInt(meta.preferred_x) : null;
     const preferred_y = meta.preferred_y ? parseInt(meta.preferred_y) : null;
 
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
       containsBlocklisted(subject) ||
       (epitaph ? containsBlocklisted(epitaph) : false);
 
-    const ipHash = hashIP(request.headers.get('x-forwarded-for'));
+    const ipHash = hashIP(getClientIp(request));
 
     // Write grave to Supabase
     const { data: grave, error: dbError } = await supabaseAdmin
@@ -87,6 +89,8 @@ export async function POST(request: NextRequest) {
         status: isBlocked ? 'rejected' : 'pending',
         rejection_reason: isBlocked ? 'auto-rejected: blocklist' : null,
         ip_hash: ipHash,
+        // Use pre-generated share_token from checkout so it matches the success URL
+        ...(share_token ? { share_token } : {}),
         // Store preferred plot so approve route can honour it
         ...(preferred_x != null && preferred_y != null ? { grid_x: preferred_x, grid_y: preferred_y } : {}),
       })
@@ -96,6 +100,15 @@ export async function POST(request: NextRequest) {
     if (dbError) {
       console.error('Supabase insert error:', dbError);
       return NextResponse.json({ error: 'Database error' }, { status: 500 });
+    }
+
+    // Detect share_token collision: if Supabase assigned a different token than the one
+    // pre-generated at checkout, the success URL and email link will permanently diverge.
+    if (share_token && grave?.share_token && grave.share_token !== share_token) {
+      console.error(
+        'share_token mismatch: success URL token will not match grave permalink.',
+        { expected: share_token, actual: grave.share_token, session_id: session.id },
+      );
     }
 
     // Send confirmation email via Resend (only if email exists and not blocked)

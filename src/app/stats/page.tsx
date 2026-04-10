@@ -58,7 +58,7 @@ export default async function StatsPage() {
 
   const stats        = statsResult.data;
   const newest       = (newestResult.data ?? []) as Partial<Grave>[];
-  const oldest       = newestResult.data ? oldestResult.data : null;
+  const oldest       = oldestResult.data ?? null;
   const todayCount   = todayResult.count ?? 0;
   const allTiers     = tierResult.data ?? [];
   const topVisited   = (topVisitedResult.data ?? []) as Grave[];

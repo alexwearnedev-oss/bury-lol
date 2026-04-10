@@ -8,8 +8,18 @@ const schema = z.object({
   reason: z.string().max(200).optional(),
 });
 
+/**
+ * Canonical grid encoding (M1 — single source of truth for the approve route):
+ *   grid_x = row * GRID_COLS + col   (integer 0–99)
+ *   grid_y = 0                        (always; the second dimension is unused)
+ *
+ * GRID_COLS = 10, GRID_ROWS = 10, total plots = 100.
+ * Decoding: col = grid_x % 10, row = Math.floor(grid_x / 10).
+ * This matches GraveyardCanvas.dbToDisp and PlotPicker's encode/decode logic.
+ */
+const GRID_PLOTS = 100; // GRID_COLS(10) × GRID_ROWS(10)
+
 // Find first free grid position that isn't taken by any approved grave.
-// Scans gx=0,1,2,... with gy=0 (the canonical encoding used everywhere).
 async function findFreeGridPosition(excludeId: string): Promise<{ grid_x: number; grid_y: number }> {
   const { data } = await supabaseAdmin
     .from('graves')
@@ -23,18 +33,23 @@ async function findFreeGridPosition(excludeId: string): Promise<{ grid_x: number
   // Exclude the grave being approved (it may already have a preferred position recorded)
   void excludeId;
 
-  // 10×10 grid = 100 fixed plots (gx 0–99, gy 0)
-  for (let gx = 0; gx < 100; gx++) {
+  for (let gx = 0; gx < GRID_PLOTS; gx++) {
     if (!occupied.has(`${gx},0`)) {
       return { grid_x: gx, grid_y: 0 };
     }
   }
   // Graveyard full — overflow beyond grid (admin should handle)
-  return { grid_x: 100, grid_y: 0 };
+  return { grid_x: GRID_PLOTS, grid_y: 0 };
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
   const result = schema.safeParse(body);
 
   if (!result.success) {

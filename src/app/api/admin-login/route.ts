@@ -1,18 +1,36 @@
+import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { createAdminToken, ADMIN_SESSION_DURATION_MS, ADMIN_TOKEN_COOKIE } from '@/lib/admin-token';
 
 export async function POST(request: NextRequest) {
-  const { password } = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
 
-  if (!password || password !== process.env.ADMIN_PASSWORD) {
+  const { password } = body as Record<string, unknown>;
+
+  const adminPassword = process.env.ADMIN_PASSWORD ?? '';
+  const passwordMatch =
+    typeof password === 'string' &&
+    adminPassword.length > 0 &&
+    password.length === adminPassword.length &&
+    timingSafeEqual(Buffer.from(password), Buffer.from(adminPassword));
+
+  if (!passwordMatch) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const token = await createAdminToken(process.env.ADMIN_PASSWORD!);
+
   const response = NextResponse.json({ ok: true });
-  response.cookies.set('admin_token', process.env.ADMIN_PASSWORD!, {
+  response.cookies.set(ADMIN_TOKEN_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: ADMIN_SESSION_DURATION_MS / 1000, // cookie maxAge is in seconds
     path: '/',
   });
 

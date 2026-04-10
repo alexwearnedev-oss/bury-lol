@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Press_Start_2P, VT323 } from 'next/font/google';
+import localFont from 'next/font/local';
 import "./globals.css";
 
-const pressStart2P = Press_Start_2P({
-  weight: '400',
-  subsets: ['latin'],
+// Fonts are served from committed WOFF2 files in /public/fonts/ to avoid
+// network fetches to fonts.gstatic.com during build (H4 — build reliability).
+const pressStart2P = localFont({
+  src: '../../public/fonts/PressStart2P-Regular.woff2',
   variable: '--font-pixel',
   display: 'swap',
 });
 
-const vt323 = VT323({
-  weight: '400',
-  subsets: ['latin'],
+const vt323 = localFont({
+  src: '../../public/fonts/VT323-Regular.woff2',
   variable: '--font-vt323',
   display: 'swap',
 });

@@ -60,9 +60,7 @@ export default function BuryPage() {
   const [subject,       setSubject]       = useState('');
   const [epitaph,       setEpitaph]       = useState('');
   const [buriedBy,      setBuriedBy]      = useState('');
-  const [birthYear,     setBirthYear]     = useState('');
-  const [deathYear,     setDeathYear]     = useState('');
-  const [icon,          setIcon]          = useState('🪦');
+const [icon,          setIcon]          = useState('🪦');
   const [tier,          setTier]          = useState<1|2|3|4>(2);
   const [preferredPlot, setPreferredPlot] = useState<PlotPosition | null>(null);
   const [loading,       setLoading]       = useState(false);
@@ -159,38 +157,7 @@ export default function BuryPage() {
                 </span>
               </div>
 
-              <div className="mb-4 grid grid-cols-2 gap-3">
-                <div>
-                  <label className="mb-1 block text-muted" style={{ fontFamily: 'var(--font-pixel)', fontSize: 7 }}>
-                    BIRTH YEAR <span className="text-dim">(optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="1999"
-                    maxLength={4}
-                    value={birthYear}
-                    onChange={e => setBirthYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                    className="pixel-input w-full px-3 py-2"
-                    style={{ fontFamily: 'var(--font-vt323)', fontSize: 20 }}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-muted" style={{ fontFamily: 'var(--font-pixel)', fontSize: 7 }}>
-                    DEATH YEAR <span className="text-dim">(optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="2024"
-                    maxLength={4}
-                    value={deathYear}
-                    onChange={e => setDeathYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                    className="pixel-input w-full px-3 py-2"
-                    style={{ fontFamily: 'var(--font-vt323)', fontSize: 20 }}
-                  />
-                </div>
-              </div>
-
-              <div className="mb-4">
+<div className="mb-4">
                 <label
                   htmlFor="epitaph"
                   className="mb-1 block text-muted"

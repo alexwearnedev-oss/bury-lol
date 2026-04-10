@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '@/lib/supabase-client';
 
-// Display grid is 10×10. Encoding: gx = row*10 + col, gy = 0
-const COLS = 10;
+// Canonical grid encoding (M1): grid_x = row * GRID_COLS + col, grid_y = 0.
+// GRID_COLS must match GraveyardCanvas (DISP_COLS) and the approve route (GRID_COLS).
+const COLS = 10; // = GRID_COLS
 const ROWS = 10;
 
 export interface PlotPosition {
@@ -27,6 +28,7 @@ export default function PlotPicker({ value, onChange }: PlotPickerProps) {
     supabaseClient
       .from('graves')
       .select('grid_x, grid_y')
+      .eq('status', 'approved')
       .not('grid_x', 'is', null)
       .then(({ data }) => {
         const set = new Set<string>();

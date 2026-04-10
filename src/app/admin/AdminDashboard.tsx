@@ -139,13 +139,26 @@ export default function AdminDashboard({ pending, reported, counts }: Props) {
     });
   };
 
+  const handleLogout = async () => {
+    await fetch('/api/admin-logout', { method: 'POST' });
+    window.location.href = '/admin/login';
+  };
+
   return (
     <div className="min-h-screen bg-bg px-4 py-8">
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <h1 className="font-serif text-2xl font-bold text-cream">bury.lol admin</h1>
-          <a href="/" className="text-xs text-stone hover:text-cream">← back to site</a>
+          <div className="flex items-center gap-4">
+            <a href="/" className="text-xs text-stone hover:text-cream">← back to site</a>
+            <button
+              onClick={handleLogout}
+              className="text-xs text-stone hover:text-red-400"
+            >
+              Log out
+            </button>
+          </div>
         </div>
 
         {/* Stats bar */}

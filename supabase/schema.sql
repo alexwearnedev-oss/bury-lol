@@ -37,7 +37,11 @@ create table graves (
   share_token text unique default encode(gen_random_bytes(6), 'hex'),
 
   -- Reporting
-  report_count integer default 0
+  report_count integer default 0,
+
+  -- Engagement
+  icon text,
+  visit_count integer not null default 0
 );
 
 -- Stats table (materialised counters — updated via triggers for performance)
@@ -74,6 +78,7 @@ create index graves_status_idx on graves(status);
 create index graves_position_idx on graves(grid_x, grid_y);
 create index graves_tier_idx on graves(tier);
 create index graves_created_idx on graves(created_at desc);
+create index graves_visit_count_idx on graves(visit_count desc);
 
 -- Row Level Security
 alter table graves enable row level security;
@@ -88,3 +93,40 @@ create policy "Public can read stats"
   using (true);
 
 -- No public writes — all writes via service role in API routes only
+
+-- RPC: increment_visit_count
+-- Called fire-and-forget by /grave/[shareToken] on each page view.
+-- SECURITY DEFINER + search_path guard + service_role-only EXECUTE.
+create or replace function increment_visit_count(grave_share_token text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update graves
+  set visit_count = visit_count + 1
+  where share_token = grave_share_token;
+end;
+$$;
+
+-- RPC: increment_report_count
+-- Called by /api/report to atomically increment report_count.
+create or replace function increment_report_count(token text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update graves
+  set report_count = report_count + 1
+  where share_token = token;
+end;
+$$;
+
+-- Restrict direct RPC calls to service_role only (no anon key abuse).
+revoke execute on function increment_visit_count(text) from public;
+revoke execute on function increment_report_count(text) from public;
+grant execute on function increment_visit_count(text) to service_role;
+grant execute on function increment_report_count(text) to service_role;

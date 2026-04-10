@@ -7,6 +7,14 @@ import GraveModal from './GraveModal';
 import type { Grave } from '@/lib/types';
 
 // ── Grid constants ─────────────────────────────────────────────────────────────
+/**
+ * Canonical grid encoding (M1):
+ *   grid_x = row * GRID_COLS + col   (integer 0–99)
+ *   grid_y = 0                        (always; second dimension is unused)
+ *
+ * GRID_COLS = DISP_COLS = 10. This constant must match the approve route and
+ * PlotPicker. Change only with a coordinated migration.
+ */
 const DISP_COLS  = 10;
 /** Two-cell buffer ring of forest trees around the cemetery. */
 const BG_EXT     = 2;
@@ -19,8 +27,9 @@ const DISP_ROWS  = 10;
 const CAM_MARGIN = 60;
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
-function dbToDisp(gx: number, gy: number) {
-  return { col: gx % DISP_COLS, row: Math.floor(gx / DISP_COLS) + gy * 2 };
+/** Decode canonical grid_x to display (col, row). grid_y is always 0 and ignored. */
+function dbToDisp(gx: number) {
+  return { col: gx % DISP_COLS, row: Math.floor(gx / DISP_COLS) };
 }
 function isoOff(col: number, row: number) {
   return { x: (col - row) * TILE_W / 2, y: (col + row) * TILE_H / 2 };
@@ -1320,7 +1329,7 @@ export default function GraveyardCanvas({ initialGraves }: Props) {
     const map = new Map<string, Grave>();
     for (const g of graves) {
       if (g.grid_x == null || g.grid_y == null) continue;
-      const { col, row } = dbToDisp(g.grid_x, g.grid_y);
+      const { col, row } = dbToDisp(g.grid_x);
       map.set(`${col},${row}`, g);
     }
     return map;
