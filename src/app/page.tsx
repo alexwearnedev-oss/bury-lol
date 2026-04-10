@@ -137,7 +137,7 @@ function BurialRow({ grave, rank }: { grave: Grave; rank: number }) {
 }
 
 export default async function Home() {
-  const [gravesResult, statsResult] = await Promise.all([
+  const [gravesResult, statsResult, trendingResult] = await Promise.all([
     supabase
       .from('graves')
       .select('id, subject, epitaph, buried_by, tier, amount_paid, share_token, grid_x, grid_y, created_at, status, report_count, icon, visit_count')
@@ -145,12 +145,19 @@ export default async function Home() {
       .order('created_at', { ascending: false })
       .limit(20),
     supabase.from('stats').select('total_approved, total_revenue_cents').single(),
+    supabase
+      .from('graves')
+      .select('id, subject, share_token, icon, visit_count')
+      .eq('status', 'approved')
+      .order('visit_count', { ascending: false })
+      .limit(5),
   ]);
 
   const recentGraves = (gravesResult.data ?? []) as Grave[];
   const stats = statsResult.data as Stats | null;
   const totalApproved  = stats?.total_approved ?? 0;
   const totalRevenueDollars = Math.floor((stats?.total_revenue_cents ?? 0) / 100);
+  const trending = (trendingResult.data ?? []) as Pick<Grave, 'id' | 'subject' | 'share_token' | 'icon' | 'visit_count'>[];
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: '#0D0B1E' }}>
@@ -222,6 +229,43 @@ export default async function Home() {
             </Link>
           </div>
         </section>
+
+        {/* ── Most visited ── */}
+        {trending.length > 0 && (
+          <section className="w-full max-w-xl px-4 pb-8">
+            <div className="mb-3 flex items-center justify-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span
+                className="text-dim tracking-widest"
+                style={{ fontFamily: 'var(--font-pixel)', fontSize: 7 }}
+              >
+                ✦ MOST VISITED ✦
+              </span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+            <div className="flex flex-wrap justify-center gap-2">
+              {trending.map((g, i) => (
+                <Link
+                  key={g.id}
+                  href={`/grave/${g.share_token}`}
+                  className="flex items-center gap-2 border border-border px-3 py-2 transition-colors hover:border-muted hover:bg-surfaceHi"
+                  style={{ background: '#12102A' }}
+                >
+                  <span className="text-dim" style={{ fontFamily: 'var(--font-pixel)', fontSize: 6 }}>
+                    #{i + 1}
+                  </span>
+                  <span className="text-base leading-none">{g.icon ?? '🪦'}</span>
+                  <span style={{ fontFamily: 'var(--font-vt323)', fontSize: 17 }} className="text-cream">
+                    {g.subject}
+                  </span>
+                  <span className="text-dim" style={{ fontFamily: 'var(--font-pixel)', fontSize: 6 }}>
+                    {g.visit_count}v
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── Recent burials ── */}
         <section className="w-full max-w-xl px-4 pb-12">
